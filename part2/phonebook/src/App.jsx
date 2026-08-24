@@ -31,6 +31,15 @@ const App = () => {
             setPersons(persons.concat(returnedPerson))
           })
   }
+  const deletePerson = (id, name) => {
+  if (window.confirm(`Delete ${name}?`)) {
+    personService
+      .remove(id)
+      .then(() => {
+        setPersons(persons.filter(p => p.id !== id))
+      })
+  }
+}
 
   return (
     <div>
@@ -39,7 +48,7 @@ const App = () => {
       <h3>add a new</h3>
       <PersonForm persons={persons} onAddPerson={addPerson}/>
       <h3>Numbers</h3>
-      <Persons onShowPerson={personsToShow}/>
+      <Persons onShowPerson={personsToShow} onDeletePerson={deletePerson}/>
     </div>
   )
 }
