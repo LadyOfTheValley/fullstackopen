@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import axios from 'axios'
 
 const PersonForm = ({persons, onAddPerson}) => {
 
@@ -8,26 +7,23 @@ const PersonForm = ({persons, onAddPerson}) => {
 
       const addName = (event) => {
         event.preventDefault()
-        console.log('button clicked', {persons})
+        
+        if (!newName.trim() || !newNumber.trim()) {
+                    window.alert('Name and number cannot be empty')
+                    return
+                }
 
         if ( persons.some(person => person.name === newName)) {
             window.alert(`${newName} is already added to phonebook`)
             return //
         }
 
-        const PersonObject = {
+        const personObject = {
             name: newName,
             number: newNumber,
         }
 
-        axios
-            .post('http://localhost:3001/persons', PersonObject)
-            .then(response => {
-            onAddPerson(PersonObject)
-            console.log(response)
-            })        
-        // 
-
+        onAddPerson(personObject)
         setNewName('')
         setNewNumber('')
         }

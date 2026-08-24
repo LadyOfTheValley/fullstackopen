@@ -2,12 +2,20 @@ import { useState, useEffect } from 'react'
 import PersonForm from './PersonForm'
 import Persons from './Persons'
 import Filter from './Filter'
-import axios from 'axios'
+import personService from './services/personService'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
-  
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+  }, [])  
+
   const handleSearch = (event) => {
     setSearchQuery(event.target.value)
   }
@@ -16,19 +24,13 @@ const App = () => {
   person.name.toLowerCase().includes(searchQuery.toLowerCase())
 )
 
-  const addPerson = (newPerson) => {
-    setPersons(persons.concat(newPerson))
+  const addPerson = (personObject) => {
+    personService
+          .create(personObject)
+          .then(returnedPerson => {
+            setPersons(persons.concat(returnedPerson))
+          })
   }
-
-  useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
-  }, [])
 
   return (
     <div>

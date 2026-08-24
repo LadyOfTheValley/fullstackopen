@@ -29,6 +29,11 @@
       "name": "Steve Rodgers",
       "number": "555-555-555",
       "id": "6"
+    },
+    {
+      "name": "Steven",
+      "number": "456",
+      "id": "uAeTw_ZFcDQ"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
