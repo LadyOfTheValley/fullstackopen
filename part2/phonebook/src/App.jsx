@@ -9,7 +9,8 @@ import './index.css'
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [searchQuery, setSearchQuery] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  // const [errorMessage, setErrorMessage] = useState('')
+  const [notification, setNotification] = useState({ message: null, isError: false })
 
   useEffect(() => {
     personService
@@ -18,6 +19,13 @@ const App = () => {
         setPersons(initialPersons)
       })
   }, [])  
+
+  const showNotification = (message, isError = false) => {
+    setNotification({ message, isError })
+    setTimeout(() => {
+      setNotification({ message: null, isError: false })
+    }, 5000)
+  }
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value)
@@ -51,10 +59,14 @@ const App = () => {
           .update(existingPerson.id, updatedPersonObject)
           .then(returnedPerson => {
             setPersons(persons.map(p => (p.id !== existingPerson.id ? p : returnedPerson)))
-            setErrorMessage(`Updated ${existingPerson.name}'s Number`)
-            setTimeout(() => {
-              setErrorMessage(null)
-            }, 5000)
+            showNotification(`Updated ${existingPerson.name}'s number`, false)
+          })
+          .catch(error => {
+            showNotification(
+              `Information of ${existingPerson.name} has already been removed from server`,
+              true
+            )
+            setPersons(persons.filter(p => p.id !== existingPerson.id))
           })
       }
       return
@@ -64,17 +76,14 @@ const App = () => {
       .create(personObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
-        setErrorMessage(`Added ${returnedPerson.name}`)
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
+        showNotification(`Added ${returnedPerson.name}`)
       })
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={errorMessage} />
+      <Notification message={notification.message} isError={notification.isError} />
       <Filter searchQuery={searchQuery} handleSearch={handleSearch}/>
       <h3>add a new</h3>
       <PersonForm persons={persons} onAddPerson={addPerson}/>
