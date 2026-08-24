@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import axios from 'axios'
 
 const PersonForm = ({persons, onAddPerson}) => {
 
@@ -16,10 +17,16 @@ const PersonForm = ({persons, onAddPerson}) => {
 
         const PersonObject = {
             name: newName,
-            number: newNumber
+            number: newNumber,
         }
 
-        onAddPerson(PersonObject)
+        axios
+            .post('http://localhost:3001/persons', PersonObject)
+            .then(response => {
+            onAddPerson(PersonObject)
+            console.log(response)
+            })        
+        // 
 
         setNewName('')
         setNewNumber('')
