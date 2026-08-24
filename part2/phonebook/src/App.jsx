@@ -24,13 +24,6 @@ const App = () => {
   person.name.toLowerCase().includes(searchQuery.toLowerCase())
 )
 
-  const addPerson = (personObject) => {
-    personService
-          .create(personObject)
-          .then(returnedPerson => {
-            setPersons(persons.concat(returnedPerson))
-          })
-  }
   const deletePerson = (id, name) => {
   if (window.confirm(`Delete ${name}?`)) {
     personService
@@ -40,6 +33,32 @@ const App = () => {
       })
   }
 }
+  const addPerson = (personObject) => {
+    const existingPerson = persons.find(p => p.name.toLowerCase() === personObject.name.toLowerCase())
+
+    if (existingPerson) {
+      const confirmUpdate = window.confirm(
+        `${existingPerson.name} is already added to the phonebook, replace the old number with a new one?`
+      )
+
+      if (confirmUpdate) {
+        const updatedPersonObject = { ...existingPerson, number: personObject.number }
+
+        personService
+          .update(existingPerson.id, updatedPersonObject)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => (p.id !== existingPerson.id ? p : returnedPerson)))
+          })
+      }
+      return
+    }
+
+    personService
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+      })
+  }
 
   return (
     <div>

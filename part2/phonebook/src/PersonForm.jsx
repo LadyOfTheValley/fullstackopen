@@ -13,8 +13,8 @@ const PersonForm = ({persons, onAddPerson}) => {
                     return
                 }
 
-        if ( persons.some(person => person.name === newName)) {
-            window.alert(`${newName} is already added to phonebook`)
+        if ( persons.some(person => person.number === newNumber)) {
+            window.alert(`${newNumber} is already added to phonebook`)
             return //
         }
 
