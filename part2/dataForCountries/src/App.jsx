@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+const api_key = import.meta.env.VITE_SOME_KEY
+
 function App() {
   const [countries, setCountries] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [weather, setWeather] = useState(null)
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value)
@@ -24,10 +27,23 @@ function App() {
         country.name.common.toLowerCase().includes(searchQuery.toLowerCase())
       )
 
-  const renderContent = () => {
-    if (searchQuery === '') {
-      return null
+  // Fetch weather whenever countriesToShow drops down to exactly 1 match
+  const singleCountry = countriesToShow.length === 1 ? countriesToShow[0] : null
+  const capital = singleCountry && singleCountry.capital ? singleCountry.capital[0] : null
+
+  useEffect(() => {
+    if (capital) {
+      axios
+        .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&units=metric&appid=${api_key}`)
+        .then(response => {
+          setWeather(response.data)
+        })
+        .catch(error => console.error('Error fetching weather:', error))
     }
+  }, [capital])
+
+  const renderContent = () => {
+    if (searchQuery === '') return null
 
     if (countriesToShow.length > 10) {
       return <p>Too many matches, specify another filter</p>
@@ -70,6 +86,18 @@ function App() {
             alt={country.flags.alt || `Flag of ${country.name.common}`} 
             width="150" 
           />
+
+          {weather && capital && (
+            <div>
+              <h3>Weather in {capital}</h3>
+              <p>temperature {weather.main.temp} Celsius</p>
+              <img 
+                src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} 
+                alt={weather.weather[0].description} 
+              />
+              <p>wind {weather.wind.speed} m/s</p>
+            </div>
+          )}
         </div>
       )
     }
