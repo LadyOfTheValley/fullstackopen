@@ -9,7 +9,6 @@ import './index.css'
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [searchQuery, setSearchQuery] = useState('')
-  // const [errorMessage, setErrorMessage] = useState('')
   const [notification, setNotification] = useState({ message: null, isError: false })
 
   useEffect(() => {
