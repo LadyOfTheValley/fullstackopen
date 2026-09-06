@@ -12,7 +12,6 @@ const number = process.argv[4]
 const url = `mongodb+srv://asmaarebiha_db_user:${password}@cluster0.0ge7wn5.mongodb.net/?appName=Cluster0`
 
 mongoose.set('strictQuery',false)
-
 mongoose.connect(url, { family: 4 })
 
 const personSchema = new mongoose.Schema({
