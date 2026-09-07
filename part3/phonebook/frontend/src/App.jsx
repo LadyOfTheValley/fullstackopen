@@ -15,9 +15,18 @@ const App = () => {
     personService
       .getAll()
       .then(initialPersons => {
-        setPersons(initialPersons)
+        if (Array.isArray(initialPersons)) {
+          setPersons(initialPersons)
+        } else {
+          console.error('Expected array but received:', initialPersons)
+          setPersons([])
+        }
       })
-  }, [])  
+      .catch(error => {
+        console.error('Failed to fetch persons:', error)
+        setPersons([])
+      })
+  }, [])
 
   const showNotification = (message, isError = false) => {
     setNotification({ message, isError })
@@ -52,7 +61,7 @@ const App = () => {
       )
 
       if (confirmUpdate) {
-        const updatedPersonObject = { ...existingPerson, number: personObject.number }
+        const updatedPersonObject = { name: existingPerson.name, number: personObject.number }
 
         personService
           .update(existingPerson.id, updatedPersonObject)
