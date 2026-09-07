@@ -15,25 +15,30 @@ mongoose.set('strictQuery',false)
 mongoose.connect(url, { family: 4 })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
+  name: String,
+  number: String,
 })
 
 const Person = mongoose.model('Person', personSchema)
 
 const person = new Person({
-    name: name,
-    number: number,
+  name: name,
+  number: number,
+})
+
+person.save().then(() => {
+  console.log('person saved!')
+  mongoose.connection.close()
 })
 
 if (process.argv.length === 3) {
-Person.find({}).then(result => {
-  console.log('phonebook:')
-  result.forEach(person => {
-    console.log(`${person.name} ${person.number}`)
+  Person.find({}).then(result => {
+    console.log('phonebook:')
+    result.forEach(person => {
+      console.log(`${person.name} ${person.number}`)
+    })
+    mongoose.connection.close()
   })
-  mongoose.connection.close()
-})    
 }
 
 else if (process.argv.length >= 5) {
@@ -46,7 +51,7 @@ else if (process.argv.length >= 5) {
     console.log('Person saved!')
     mongoose.connection.close()
   })
-} 
+}
 else {
   console.log('Please provide both name and number to add an entry.')
   mongoose.connection.close()
