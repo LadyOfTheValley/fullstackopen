@@ -86,8 +86,13 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         showNotification(`Added ${returnedPerson.name}`)
       })
-  }
-
+      .catch(error => {
+        const errorMessage = error.response?.data?.error || 'Validation error occurred'
+        console.log('Error message to display:', errorMessage)
+        
+        showNotification(errorMessage, true)
+      })
+    }
   return (
     <div>
       <h2>Phonebook</h2>
