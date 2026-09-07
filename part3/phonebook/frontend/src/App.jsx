@@ -70,11 +70,16 @@ const App = () => {
             showNotification(`Updated ${existingPerson.name}'s number`, false)
           })
           .catch(error => {
-            showNotification(
-              `Information of ${existingPerson.name} has already been removed from server`,
-              true
-            )
-            setPersons(persons.filter(p => p.id !== existingPerson.id))
+                if (error.response && error.response.status === 400) {
+                  const errorMessage = error.response.data.error || 'Validation failed'
+                  showNotification(errorMessage, true)
+                } else {
+                  showNotification(
+                    `Information of ${existingPerson.name} has already been removed from server`,
+                    true
+                  )
+                  setPersons(persons.filter(p => p.id !== existingPerson.id))
+                }
           })
       }
       return
